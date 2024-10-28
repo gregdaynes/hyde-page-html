@@ -14,4 +14,5 @@ Gem::Specification.new do |s|
   s.require_path = "lib"
 
   s.add_development_dependency "jekyll", ">= 4.0", "< 5.0"
+  s.add_dependency 'w3c_validators', '~> 1.3', '>= 1.3.7'
 end
