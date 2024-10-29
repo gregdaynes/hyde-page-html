@@ -11,3 +11,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Validate HTML5 files with the Nu HTML Checker.
 - Tidy HTML with HTMLBeautifier
+- Compress HTML with HTMLCompressor

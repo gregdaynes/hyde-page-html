@@ -48,4 +48,4 @@ hyde_page_html:
 : When true, pass the rendered html through htmlbeautifier 
 
 `minify`
-: minify the css generated (reuses Jekyll's SASS compiler, so you can also use SASS/SCSS in your files)
+: When true, pass the rendered html through htmlcompressor

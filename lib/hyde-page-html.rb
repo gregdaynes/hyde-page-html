@@ -2,6 +2,7 @@ require "jekyll"
 require "digest"
 require 'w3c_validators'
 require 'htmlbeautifier'
+require 'htmlcompressor'
 
 Jekyll::Hooks.register :site, :post_write do
   Hyde::Page.cache_delete('checked')
@@ -32,11 +33,11 @@ module Hyde
       return doc.output unless doc.output_ext == '.html'
 
       # use the cache to track 1 page or document per build
-      return doc.output if cache.key?('checked')
+      # return doc.output if cache.key?('checked')
 
       # check page is in cache and valid
       if cache.key?(doc.path)
-        return doc.output if self.cache[doc.path] == 1
+        # return doc.output if self.cache[doc.path] == 1
       end
 
       Hyde::Page::Html.new(doc, cache).run
@@ -53,7 +54,8 @@ module Hyde
         "enable" => true,
         "validate" => true,
         "validator_uri" => nil,
-        "beautify" => true
+        "beautify" => true,
+        "minify" => true
       }
 
       def initialize(page, cache)
@@ -69,16 +71,20 @@ module Hyde
       end
 
       def run
-        return @page unless @config.fetch('enable')
+        return @page.output unless @config.fetch('enable')
 
         output = @page.output
 
         if @config.fetch('validate')
-          validate
+          # validate
         end
 
         if @config.fetch('beautify')
           output = beautify
+        end
+
+        if @config.fetch('minify')
+          output = minify
         end
 
         @page.output = output
@@ -86,8 +92,36 @@ module Hyde
 
       private
 
-      def beautify 
+      def beautify
         HtmlBeautifier.beautify(@page.output, indent: "\t")
+      end
+
+      def minify
+        options = {
+          :enabled => true,
+          :remove_spaces_inside_tags => true,
+          :remove_multi_spaces => true,
+          :remove_comments => true,
+          :remove_intertag_spaces => true,
+          :remove_quotes => true,
+          :compress_css => false,
+          :compress_javascript => false,
+          :simple_doctype => true,
+          :remove_script_attributes => true,
+          :remove_style_attributes => true,
+          :remove_link_attributes => false,
+          :remove_form_attributes => false,
+          :remove_input_attributes => false,
+          :remove_javascript_protocol => true,
+          :remove_http_protocol => true,
+          :remove_https_protocol => true,
+          :preserve_line_breaks => false,
+          :simple_boolean_attributes => true,
+          :compress_js_templates => false
+        }
+
+        compressor = HtmlCompressor::Compressor.new(options)
+        compressor.compress(@page.output)
       end
 
       def validate
