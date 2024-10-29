@@ -29,15 +29,20 @@ Hyde Page HTML comes with the following configuration. Override as necessary in 
 hyde_page_html:
   enable: true
   validate: true
+  validator_uri: nil
   tidy: true
   minify: false
 ```
 
 `enable`
-:  
+: When true, the plugin will run through enabled processes
 
 `validate`
-:
+: When true, checks the rendered HTML of each page and document against Nu Validator. If using the public checker, this is limited to 1 file per build.
+
+`validator_uri`
+: Url for a private validation service. Eg: local dockerized Nu Validator 'http://0.0.0.0:8888/'
+: Run docker container with `docker run -it --rm -p 8888:8888 ghcr.io/validator/validator:latest`
 
 `tidy`
 :
