@@ -32,14 +32,6 @@ module Hyde
       # filter out non-html pages
       return doc.output unless doc.output_ext == '.html'
 
-      # use the cache to track 1 page or document per build
-      # return doc.output if cache.key?('checked')
-
-      # check page is in cache and valid
-      if cache.key?(doc.path)
-        # return doc.output if self.cache[doc.path] == 1
-      end
-
       Hyde::Page::Html.new(doc, cache).run
     end
 
@@ -76,7 +68,7 @@ module Hyde
         output = @page.output
 
         if @config.fetch('validate')
-          # validate
+          validate
         end
 
         if @config.fetch('beautify')
@@ -125,6 +117,15 @@ module Hyde
       end
 
       def validate
+        # use the cache to track 1 page or document per build when using public validator
+        return if @cache.key?('checked')
+
+        # check page is in cache and valid
+        if @cache.key?(@page.path)
+          # TODO clear cache when page changes?
+          return @page.output if @cache[@page.path] == 1
+        end
+
         Jekyll.logger.info('Validating HTML:', @page.path)
         results = @validator.validate_text(@page.output)
 
@@ -156,8 +157,6 @@ module Hyde
           @cache[@page.path] = 1
           Jekyll.logger.info('Validated HTML:', 'valid')
         end
-
-        @doc.output
       end
 
       def fetch_config
