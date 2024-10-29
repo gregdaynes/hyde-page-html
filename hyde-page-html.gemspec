@@ -15,4 +15,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "jekyll", ">= 4.0", "< 5.0"
   s.add_dependency 'w3c_validators', '~> 1.3', '>= 1.3.7'
+  s.add_dependency 'htmlbeautifier', '~> 1.4', '>= 1.4.3'
 end

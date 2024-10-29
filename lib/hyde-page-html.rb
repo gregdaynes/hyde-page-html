@@ -1,6 +1,7 @@
 require "jekyll"
 require "digest"
 require 'w3c_validators'
+require 'htmlbeautifier'
 
 Jekyll::Hooks.register :site, :post_write do
   Hyde::Page.cache_delete('checked')
@@ -35,7 +36,7 @@ module Hyde
 
       # check page is in cache and valid
       if cache.key?(doc.path)
-        # return doc.output if self.cache[doc.path] == 1
+        return doc.output if self.cache[doc.path] == 1
       end
 
       Hyde::Page::Html.new(doc, cache).run
@@ -51,7 +52,8 @@ module Hyde
       @@config = {
         "enable" => true,
         "validate" => true,
-        "validator_uri" => nil
+        "validator_uri" => nil,
+        "beautify" => true
       }
 
       def initialize(page, cache)
@@ -67,16 +69,26 @@ module Hyde
       end
 
       def run
-        return @page if @config.fetch('enable')
+        return @page unless @config.fetch('enable')
+
+        output = @page.output
 
         if @config.fetch('validate')
           validate
         end
 
-        return @page
+        if @config.fetch('beautify')
+          output = beautify
+        end
+
+        @page.output = output
       end
 
       private
+
+      def beautify 
+        HtmlBeautifier.beautify(@page.output, indent: "\t")
+      end
 
       def validate
         Jekyll.logger.info('Validating HTML:', @page.path)

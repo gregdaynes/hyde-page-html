@@ -45,7 +45,7 @@ hyde_page_html:
 : Run docker container with `docker run -it --rm -p 8888:8888 ghcr.io/validator/validator:latest`
 
 `tidy`
-:
+: When true, pass the rendered html through htmlbeautifier 
 
 `minify`
 : minify the css generated (reuses Jekyll's SASS compiler, so you can also use SASS/SCSS in your files)
