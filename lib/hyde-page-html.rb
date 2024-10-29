@@ -85,10 +85,12 @@ module Hyde
       private
 
       def beautify
+        Jekyll.logger.info('Beautifying HTML:', @page.path)
         HtmlBeautifier.beautify(@page.output, indent: "\t")
       end
 
       def minify
+        Jekyll.logger.info('Minifying HTML:', @page.path)
         options = {
           :enabled => true,
           :remove_spaces_inside_tags => true,
@@ -111,7 +113,6 @@ module Hyde
           :simple_boolean_attributes => true,
           :compress_js_templates => false
         }
-
         compressor = HtmlCompressor::Compressor.new(options)
         compressor.compress(@page.output)
       end
