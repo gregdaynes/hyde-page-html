@@ -9,10 +9,14 @@ Jekyll::Hooks.register :site, :post_write do
 end
 
 Jekyll::Hooks.register :pages, :post_render do |page|
+  next unless page.output_ext == '.html'
+
   page.output = Hyde::Page.handler(page)
 end
 
 Jekyll::Hooks.register :documents, :post_render do |document|
+  next unless document.output_ext == '.html'
+
   document.output = Hyde::Page.handler(document)
 end
 
@@ -29,9 +33,6 @@ module Hyde
     end
 
     def self.handler(doc)
-      # filter out non-html pages
-      return doc.output unless doc.output_ext == '.html'
-
       Hyde::Page::Html.new(doc, cache).run
     end
 
@@ -57,7 +58,6 @@ module Hyde
         @config = fetch_config
 
         @validator = W3CValidators::NuValidator.new({
-          # running with docker locally docker run -it --rm -p 8888:8888 ghcr.io/validator/validator:latest
           validator_uri: @config.fetch('validator_uri')
         })
       end
